@@ -12,9 +12,12 @@ scope:
 owners: []
 evidence:
   - "Project owner created the public security-twin-adapter-lab repository on 2026-10-08"
+  - "Issue #1"
   - PUBLIC_DISCLOSURE_BOUNDARY.md
   - README.md
-related: []
+related:
+  - "Issue #2"
+  - "Issue #3"
 supersedes: []
 superseded_by: null
 ---
@@ -120,8 +123,11 @@ Revisit if:
 ## Evidence
 
 - Public repository creation by the project owner on 2026-10-08.
+- Issue #1 tracks the bootstrap boundary and CI.
 - README.md defines the public lab purpose.
 - PUBLIC_DISCLOSURE_BOUNDARY.md defines publish/keep-private and CI/Pages rules.
+- Issue #2 tracks the first Envoy / Web API reference range.
+- Issue #3 tracks the GitHub Pages conformance portal.
 
 ## Related records
 
