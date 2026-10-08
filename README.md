@@ -79,6 +79,19 @@ See the [portal build and publication guide](docs/portal.md) and
 [reviewed aggregate JSON](results/latest.json). Portal-only changes use lightweight CI;
 they do not rerun the Docker range.
 
+## Public language and evidence rule
+
+Public-facing human-readable content should use English as the primary language and
+Japanese as the maintained secondary language where practical. Machine-readable evidence,
+identifiers, contract versions, schema versions and provenance remain language-neutral
+and must not diverge between locales. Translate presentation only; do not duplicate result
+JSON or widen disclosure. Pages uses `/` (English) and `/ja/` (日本語) with one shared
+`result.json`. Update both presentations and their checks when changing portal explanations.
+
+[PDDR-0002](docs/records/PDDR-0002-public-localization-and-language-neutral-evidence.md)
+records the rationale and scope; this short contributor rule is explicit rather than
+inferred from treating a PDDR as unconditional Policy.
+
 ## PDDR
 
 Durable public-surface decisions are recorded under [docs/records](docs/records/) using [PDDR Kit](https://github.com/serevy/pddr-kit).

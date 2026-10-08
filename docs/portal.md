@@ -19,8 +19,8 @@ future imports. The snapshot is marked `workflow-artifact`; raw archives/logs ar
 retained in the repository or site. Public job PASS summaries were also cross-checked.
 
 `results/bootstrap.json` preserves the original bootstrap record. Building it produces
-BOOTSTRAP with 0/14 and every check NOT RUN; it cannot produce compatibility or success
-claims. FAIL and NOT RUN are distinct, and failed execution/teardown is never an overall PASS.
+BOOTSTRAP with 0/14 and every check NOT_RUN; it cannot produce compatibility or success
+claims. FAIL and NOT_RUN are distinct, and failed execution/teardown is never an overall PASS.
 
 ## Local build and review
 
@@ -40,7 +40,14 @@ For bootstrap review:
 python3 portal/build.py --input results/bootstrap.json --output /tmp/adapter-portal-bootstrap
 ```
 
-The generator emits exactly `index.html`, `style.css`, `result.json` and `.nojekyll`.
+The generator emits exactly `index.html`, `ja/index.html`, `style.css`, `result.json`
+and `.nojekyll`. English `/` is primary; Japanese `/ja/` is maintained secondary,
+with `English | 日本語` switches on both pages. Both are rendered from the same validated
+snapshot and link to the single root `result.json` (`../result.json` from Japanese).
+Only presentation strings are translated; scenario IDs, status values, versions, commit
+SHAs and provenance/digests remain language-neutral. There is no locale-specific JSON.
+See [PDDR-0002](records/PDDR-0002-public-localization-and-language-neutral-evidence.md)
+and the explicit README contributor rule.
 It never copies the repository, documentation tree, Docker source, logs, ZIP files or
 raw artifact contents. Asset URLs are relative, so the same output works at the project
 Pages subpath. Contract/disclosure/PDDR links point to the public repository. Rendering
@@ -113,7 +120,8 @@ checks, without triggering Envoy Docker CI. Main pushes do not redeploy; manual 
 provides the explicit first-deploy and evidence-selection gates. No workflow is run just
 to refresh a timestamp. Rendering tests cover bootstrap/fail/unknown states, publication
 allowlisting, metadata trust checks and artifact projection. The Ubuntu runner’s installed
-Chrome additionally checks desktop/mobile layout, CSS loading, exact displayed statuses
+Chrome additionally checks both English and Japanese at desktop/mobile widths, CSS loading, exact displayed statuses
 and relative links at the project subpath; screenshots are in the PR preview artifact
-only, not in the Pages publication. This smoke test uses Node built-ins and installs no
-browser or package in CI.
+only, not in the Pages publication. This smoke test uses Node built-ins and installs no browser or npm package. CI installs
+Japanese system fonts only if the runner lacks them, so Japanese screenshots can be
+reviewed; those fonts are not site assets or part of the publication allowlist.

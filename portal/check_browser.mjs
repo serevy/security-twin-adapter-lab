@@ -9,9 +9,9 @@ import {once} from 'node:events';
 const site = resolve(process.argv[2] || '_site');
 const output = resolve('portal-preview');
 const prefix = '/security-twin-adapter-lab/';
-const allowed = new Set(['index.html', 'style.css', 'result.json', '.nojekyll']);
+const allowed = new Set(['index.html', 'ja/index.html', 'style.css', 'result.json', '.nojekyll']);
 const server = createServer(async (req, res) => {
-  const file = req.url === prefix ? 'index.html' : req.url.slice(prefix.length);
+  const file = req.url === prefix ? 'index.html' : req.url === prefix + 'ja/' ? 'ja/index.html' : req.url.slice(prefix.length);
   if (!req.url.startsWith(prefix) || !allowed.has(file)) {
     res.writeHead(404).end(); return;
   }
@@ -63,32 +63,50 @@ try {
   await call('Page.enable');
   await mkdir(output, {recursive: true});
   const expected = JSON.parse(await readFile(join(site, 'result.json'), 'utf8'));
-  for (const [name, width, height] of [['desktop', 1440, 1000], ['mobile', 390, 844]]) {
-    await call('Emulation.setDeviceMetricsOverride', {width, height, deviceScaleFactor: 1, mobile: false});
-    await call('Page.navigate', {url: `http://127.0.0.1:${server.address().port}${prefix}`});
-    let report;
-    for (let i = 0; i < 50; i++) {
-      const result = await call('Runtime.evaluate', {returnByValue: true, expression: `JSON.stringify({
-        ready: document.readyState === 'complete' && !!document.querySelector('.checks'),
-        overflow: document.documentElement.scrollWidth > innerWidth,
-        background: getComputedStyle(document.body).backgroundColor,
-        checks: [...document.querySelectorAll('.checks tbody .badge')].map(x => x.textContent.replace(' ', '_')),
-        heading: document.querySelector('h1')?.textContent,
-        links: [...document.querySelectorAll('a[href]')].map(x => x.getAttribute('href'))
-      })`});
-      if (!result.result?.value) { await delay(100); continue; }
-      report = JSON.parse(result.result.value);
-      if (report.ready) break;
-      await delay(100);
+  const root = `http://127.0.0.1:${server.address().port}${prefix}`;
+  for (const locale of ['en', 'ja']) {
+    for (const [name, width, height] of [['desktop', 1440, 1000], ['mobile', 390, 844]]) {
+      await call('Emulation.setDeviceMetricsOverride', {width, height, deviceScaleFactor: 1, mobile: false});
+      await call('Page.navigate', {url: root + (locale === 'ja' ? 'ja/' : '')});
+      let report;
+      for (let i = 0; i < 50; i++) {
+        const result = await call('Runtime.evaluate', {returnByValue: true, expression: `JSON.stringify({
+          ready: document.readyState === 'complete' && document.documentElement.lang === ${JSON.stringify(locale)} && !!document.querySelector('.checks'),
+          overflow: document.documentElement.scrollWidth > innerWidth,
+          background: getComputedStyle(document.body).backgroundColor,
+          checks: [...document.querySelectorAll('.checks tbody .badge')].map(x => x.textContent),
+          heading: document.querySelector('h1')?.textContent,
+          ids: [...document.querySelectorAll('.checks tbody tr')].map(x => x.dataset.scenario),
+          evidence: document.querySelector('[data-evidence-link]')?.href,
+          stylesheet: document.querySelector('link[rel="stylesheet"]')?.href,
+          languages: [...document.querySelectorAll('.language-switch a')].map(x => [x.lang, x.href, x.textContent, x.getAttribute('aria-current')]),
+          links: [...document.querySelectorAll('a[href]')].map(x => x.getAttribute('href'))
+        })`});
+        if (!result.result?.value) { await delay(100); continue; }
+        report = JSON.parse(result.result.value);
+        if (report.ready) break;
+        await delay(100);
+      }
+      if (!report?.ready || report.overflow || report.background !== 'rgb(246, 247, 243)') throw new Error(`${name}: layout or CSS failed`);
+      if (JSON.stringify(report.checks) !== JSON.stringify(Object.values(expected.checks))) throw new Error(`${name}: displayed results mismatch`);
+      if (JSON.stringify(report.ids) !== JSON.stringify(Object.keys(expected.checks))) throw new Error(`${locale}: scenario IDs changed`);
+      if (report.evidence !== root + 'result.json' || report.stylesheet !== root + 'style.css') throw new Error('Locale-specific evidence or stylesheet');
+      const languageLinks = [['en', root, 'English', locale === 'en' ? 'page' : null], ['ja', root + 'ja/', '日本語', locale === 'ja' ? 'page' : null]];
+      if (JSON.stringify(report.languages) !== JSON.stringify(languageLinks)) throw new Error('Language switch mismatch');
+      if (!report.heading.includes(locale === 'ja' ? '操作の範囲を限定。' : 'Bounded actions.')) throw new Error('Localized heading missing');
+      const shared = await (await fetch(report.evidence)).json();
+      if (JSON.stringify(shared) !== JSON.stringify(expected)) throw new Error('Shared evidence mismatch');
+      for (const href of report.links) {
+        const url = new URL(href, root + (locale === 'ja' ? 'ja/' : ''));
+        if (url.origin === new URL(root).origin) {
+          if (!(url.href === root + '#main' || url.href === root + 'ja/#main' || [root, root + 'ja/', root + 'result.json'].includes(url.href))) throw new Error('Unexpected local link destination');
+          if (!(await fetch(url)).ok) throw new Error('Broken local link');
+        } else if (!url.href.startsWith('https://github.com/serevy/security-twin-adapter-lab')) throw new Error('Unexpected external link destination');
+      }
+      const shot = await call('Page.captureScreenshot', {format: 'png', captureBeyondViewport: true});
+      await writeFile(join(output, `${locale}-${name}.png`), Buffer.from(shot.data, 'base64'));
+      console.log(`PASS ${locale} ${name}: ${width}px, CSS loaded, no horizontal overflow, ${report.checks.length} matching statuses, project-subpath links`);
     }
-    if (!report?.ready || report.overflow || report.background !== 'rgb(246, 247, 243)') throw new Error(`${name}: layout or CSS failed`);
-    if (JSON.stringify(report.checks) !== JSON.stringify(Object.values(expected.checks))) throw new Error(`${name}: displayed results mismatch`);
-    for (const href of report.links) {
-      if (!(href === '#main' || href === './' || href === 'result.json' || href.startsWith('https://github.com/serevy/security-twin-adapter-lab'))) throw new Error('Unexpected link destination');
-    }
-    const shot = await call('Page.captureScreenshot', {format: 'png', captureBeyondViewport: true});
-    await writeFile(join(output, `${name}.png`), Buffer.from(shot.data, 'base64'));
-    console.log(`PASS ${name}: ${width}px, CSS loaded, no horizontal overflow, ${report.checks.length} matching statuses, project-subpath links`);
   }
 } finally {
   socket?.close();

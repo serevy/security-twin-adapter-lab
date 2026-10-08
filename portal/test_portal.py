@@ -7,7 +7,8 @@ import tempfile
 import unittest
 import zipfile
 
-from build import ROOT, build, render
+from build import ROOT, PUBLIC_FILES, build, check_publication, render
+from locales import LOCALES
 from evidence import BOOTSTRAP, REPOSITORY, SCENARIOS, from_artifact, read_json, validate
 
 
@@ -65,7 +66,7 @@ class PortalTests(unittest.TestCase):
         data['status'] = 'FAIL'
         page = render(data)
         self.assertIn('class="badge fail">FAIL', page)
-        self.assertIn('class="badge not_run">NOT RUN', page)
+        self.assertIn('class="badge not_run">NOT_RUN', page)
         data['status'] = 'PASS'
         with self.assertRaises(ValueError):
             validate(data)
@@ -143,11 +144,64 @@ class PortalTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             output = Path(folder) / 'site'
             build(ROOT / 'results/latest.json', output)
-            self.assertEqual({p.name for p in output.iterdir()}, {'index.html', 'style.css', 'result.json', '.nojekyll'})
+            self.assertEqual({p.relative_to(output).as_posix() for p in output.rglob('*') if p.is_file()}, PUBLIC_FILES)
             self.assertEqual(json.loads((output / 'result.json').read_text()), validate(self.snapshot))
             (output / 'unexpected.log').write_text('DO_NOT_PUBLISH')
             with self.assertRaises(ValueError):
                 build(ROOT / 'results/latest.json', output)
+
+    def test_bilingual_shared_evidence_and_stable_identifiers(self):
+        import re
+        from urllib.parse import urljoin
+        with tempfile.TemporaryDirectory() as folder:
+            output = Path(folder) / 'site'
+            build(ROOT / 'results/latest.json', output)
+            self.assertEqual([p.relative_to(output).as_posix() for p in output.rglob('*.json')], ['result.json'])
+            original = json.loads((output / 'result.json').read_text())
+            self.assertEqual(original, validate(self.snapshot))
+            for locale, page_path, url in (('en', 'index.html', 'https://example.test/lab/'),
+                                           ('ja', 'ja/index.html', 'https://example.test/lab/ja/')):
+                page = (output / page_path).read_text()
+                self.assertIn(f'<html lang="{locale}">', page)
+                href = re.search(r'data-evidence-link href="([^"]+)"', page)[1]
+                self.assertEqual(urljoin(url, href), 'https://example.test/lab/result.json')
+                self.assertEqual(re.findall(r'data-scenario="([^"]+)"', page), list(SCENARIOS))
+                self.assertIn(original['source']['head_sha'][:12], page)
+                self.assertIn(str(original['source']['evidence_id']), page)
+                self.assertIn('>English</a>', page)
+                self.assertIn('>日本語</a>', page)
+            self.assertNotIn('ja/result.json', (output / 'ja/index.html').read_text())
+
+    def test_both_locales_preserve_bootstrap_failure_and_not_run(self):
+        for locale in LOCALES:
+            page = render(BOOTSTRAP, locale)
+            self.assertIn('class="badge bootstrap">BOOTSTRAP', page)
+            self.assertNotIn('class="badge pass"', page)
+            data = copy.deepcopy(self.snapshot)
+            data['status'] = 'FAIL'
+            data['checks']['ttl_bound'] = 'FAIL'
+            data['checks']['verified_clean_recovery'] = 'NOT_RUN'
+            page = render(data, locale)
+            self.assertIn('class="badge fail">FAIL', page)
+            self.assertIn('class="badge not_run">NOT_RUN', page)
+
+    def test_translation_coverage_and_unknown_locale_fail_closed(self):
+        import re
+        for locale in LOCALES:
+            self.assertEqual(set(LOCALES[locale]['scenarios']), set(SCENARIOS))
+        en = re.findall(r'\$\{?([a-z_]+)', (ROOT / 'portal/index.html').read_text())
+        ja = re.findall(r'\$\{?([a-z_]+)', (ROOT / 'portal/index.ja.html').read_text())
+        self.assertEqual(set(en), set(ja))
+        with self.assertRaises(ValueError):
+            render(self.snapshot, 'unsupported')
+
+    def test_publication_rejects_extra_nested_files(self):
+        with tempfile.TemporaryDirectory() as folder:
+            output = Path(folder) / 'site'
+            build(ROOT / 'results/latest.json', output)
+            (output / 'ja/result.json').write_text('{}')
+            with self.assertRaises(ValueError):
+                check_publication(output)
 
 
 if __name__ == '__main__':

@@ -4,6 +4,7 @@ The portal displays the draft contract, synthetic adapter maturity, published ag
 scenario results, rollback/recovery support and source-run provenance.
 
 - [GitHub Pages portal](https://serevy.github.io/security-twin-adapter-lab/) — available after the first manual Pages deployment.
+- [Japanese portal](https://serevy.github.io/security-twin-adapter-lab/ja/) — the same evidence with localized presentation.
 - [Latest reviewed aggregate snapshot](../results/latest.json)
 - [Portal build, publication and evidence update guide](portal.md)
 - [Adapter Contract v1 — Draft](../specs/adapter-contract-v1.md)

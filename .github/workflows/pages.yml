@@ -51,6 +51,7 @@ jobs:
           import os
           from pathlib import Path
           import subprocess
+          import sys
           run_id = os.environ.get('RUN_ID', '').strip()
           bootstrap = os.environ.get('BOOTSTRAP') == 'true'
           if bootstrap and run_id:
@@ -63,11 +64,17 @@ jobs:
               subprocess.run(['python3', 'portal/import_evidence.py', '--run-id', run_id,
                               '--output', source], check=True)
           subprocess.run(['python3', 'portal/build.py', '--input', source], check=True)
-          expected = {'index.html', 'style.css', 'result.json', '.nojekyll'}
-          if {p.name for p in Path('_site').iterdir()} != expected:
-              raise SystemExit('Unexpected publication file')
+          sys.path.insert(0, 'portal')
+          from build import check_publication
+          check_publication(Path('_site'))
           PY
-      - name: Browser check at desktop and mobile widths
+      - name: Ensure Japanese glyphs are available for browser checks
+        run: |
+          if [ -z "$(fc-list :lang=ja)" ]; then
+            sudo apt-get update -qq
+            sudo apt-get install -y --no-install-recommends fonts-noto-cjk
+          fi
+      - name: Browser check for English and Japanese at desktop and mobile widths
         run: node portal/check_browser.mjs _site
       - name: Upload PR preview (no deployment permissions)
         if: github.event_name == 'pull_request'

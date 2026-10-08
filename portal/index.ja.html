@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="安全な範囲に限定されたセキュリティアダプターの公開適合検証。合成環境での契約・シナリオ別結果・復旧確認を紹介します。">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; base-uri 'none'; form-action 'none'">
+  <title>適合検証 · Security Twin Adapter Lab</title>
+  <link rel="stylesheet" href="${base}style.css">
+</head>
+<body>
+<a class="skip" href="#main">適合検証の結果へ移動</a>
+<div class="shell">
+  <header class="masthead">
+    <a class="brand" href="./" aria-label="Security Twin Adapter Lab 日本語ホーム"><span class="mark" aria-hidden="true">ST</span><span>Security Twin<br><strong>Adapter Lab</strong></span></a>
+    <div class="header-links"><nav aria-label="主なリンク"><a href="$repo/blob/main/specs/adapter-contract-v1.md">契約 ↗</a><a href="$repo">リポジトリ ↗</a></nav>$language_switch</div>
+  </header>
+  <main id="main">
+    <section class="hero" aria-labelledby="title">
+      <p class="eyebrow">公開適合検証 / 合成テスト環境</p>
+      <h1 id="title">操作の範囲を限定。<br>復旧を確かめる。</h1>
+      <p class="lede">公開アダプターで実証できることを確認します。対象を限定した制限、失敗の可視化、そして操作とは独立した復旧確認です。</p>
+      <p class="principle">継続的に検証し、介入は最小限に。復旧は確実な手順で。</p>
+    </section>
+    <section class="summary" aria-label="適合検証の概要">
+      <div><span class="label">契約</span><strong>v1 <span class="muted">/ 草案</span></strong><small>外部から確認できる動作 · pre-v1</small></div>
+      <div><span class="label">公開済みの結果</span><strong>$aggregate</strong><small>Envoy / Web API 合成テスト環境</small></div>
+      <div><span class="label">合格したシナリオ</span><strong>$passed <span class="muted">/ $total</span></strong><small>下記の出典となる実行に対応した結果</small></div>
+    </section>
+    <div class="content-grid">
+      <div>
+        <section aria-labelledby="evidence-title">
+          <div class="section-heading"><span class="section-no">01</span><h2 id="evidence-title">$headline</h2></div>
+          <p>$detail</p>
+          $failure_note
+          <div class="table-wrap"><table class="checks"><caption>Envoy / Web API の適合検証シナリオ</caption><thead><tr><th scope="col">シナリオ</th><th scope="col">結果</th></tr></thead><tbody>$rows</tbody></table></div>
+          <p class="legend"><strong>PASS</strong> 出典の実行で確認済み · <strong>FAIL</strong> 検証失敗 · <strong>NOT_RUN</strong> 結果なし。成功として扱いません。</p>
+        </section>
+        <section aria-labelledby="compatibility-title">
+          <div class="section-heading"><span class="section-no">02</span><h2 id="compatibility-title">互換性と成熟度</h2></div>
+          <div class="table-wrap"><table><caption>互換性について示せる範囲</caption><thead><tr><th scope="col">対象</th><th scope="col">成熟度</th><th scope="col">示せること</th></tr></thead><tbody>
+            <tr><th scope="row">Envoy / Web API</th><td>合成データによる参照環境</td><td>$aggregate · 公開シナリオのみ</td></tr>
+            <tr><th scope="row">本番アダプター</th><td>未評価</td><td>互換性を示すものではありません</td></tr>
+            <tr><th scope="row">非公開ランタイム</th><td>公開範囲外</td><td>この Lab の検証対象ではありません</td></tr>
+          </tbody></table></div>
+          <p class="note">参照環境の合格は、契約草案全体の検証や本番環境との互換性を意味しません。技術的な能力の表明によって、操作を許可する権限が付与されることもありません。</p>
+        </section>
+      </div>
+      <aside aria-label="検証結果の出典と復旧">
+        <section class="panel" aria-labelledby="source-title"><p class="eyebrow">出典を確認できる集約結果</p><h2 id="source-title">出典スナップショット</h2>$provenance<a class="button" data-evidence-link href="${base}result.json">共通の集約 JSON を見る ↗</a><p class="note">このサイトには生ログ、リクエストのトレース、非公開のスコア、内部の判断状態を含めていません。</p></section>
+        <section class="panel" aria-labelledby="recovery-title"><h2 id="recovery-title">復旧とロールバック</h2><p>参照環境は、繰り返しても同じ状態に戻せる明示的なロールバックと、有効期限による自動解除に対応しています。公開済みの検証結果：</p><ul class="recovery">$recovery</ul><p class="note">ロールバックの受付成功と復旧の確認は別です。状態は合成データとしてメモリ内に保持され、クラッシュ後も状態を永続的に復元できることを示すものではありません。</p></section>
+        <section class="panel boundary" aria-labelledby="boundary-title"><h2 id="boundary-title">公開範囲を守る設計</h2><p>ここで扱うのは、公開契約、合成テスト環境の能力、公開済みの集約された検証結果のみです。</p><a href="$repo/blob/main/PUBLIC_DISCLOSURE_BOUNDARY.md">公開範囲の取り決めを読む ↗</a><a href="$repo/blob/main/docs/records/PDDR-0001-public-conformance-boundary.md">PDDR-0001 を読む ↗</a></section>
+      </aside>
+    </div>
+    <section class="reproduce" aria-labelledby="reproduce-title"><div><p class="eyebrow">再現可能 / 検証内容を確認可能</p><h2 id="reproduce-title">同じ公開テストを実行できます。</h2><p>Docker Compose と Python · 合成データのみ</p></div><a class="button" href="$repo/blob/main/docs/envoy-range.md">ローカル実行の手順 ↗</a></section>
+  </main>
+  <footer><span>Security Twin Adapter Lab</span><span>公開の適合検証。示せる範囲を明確に。</span><a href="$repo/blob/main/README.ja.md" hreflang="ja">日本語ドキュメント ↗</a></footer>
+</div>
+</body>
+</html>
