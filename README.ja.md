@@ -84,3 +84,11 @@ python3 scripts/run_envoy_conformance.py
 終了時は環境を片付け、`results/envoy-web-api.json` に公開適合結果を出力します。
 [構成・検証項目・公開範囲・手動手順](docs/envoy-range.md) を参照してください。
 private 実装・判定ロジックを再現するものではありません。
+
+## 公開 conformance ポータル
+
+[GitHub Pages](https://serevy.github.io/security-twin-adapter-lab/) は初回の手動デプロイ後に公開されます。
+公開済み集約結果・シナリオ別 PASS/FAIL/NOT RUN・rollback／復旧の検証結果を、
+出典 run と対象 commit 付きで表示します。最新の公開スナップショットであり、
+本番互換性や private 実装の検証を示すものではありません。
+[ビルド・公開・結果更新手順](docs/portal.md) を参照してください。

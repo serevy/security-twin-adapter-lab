@@ -1,16 +1,33 @@
 {
-  "schema_version": "public-conformance-status-v1",
-  "generated_by": "repository-bootstrap",
-  "status": "BOOTSTRAP",
-  "contract": {
-    "version": "adapter-contract-v1-draft",
-    "validated": false
+  "schema_version": "public-conformance-portal-v1",
+  "contract_version": "v1-draft",
+  "status": "PASS",
+  "checks": {
+    "baseline_availability": "PASS",
+    "scoped_containment": "PASS",
+    "unrelated_session_survival": "PASS",
+    "explicit_rollback": "PASS",
+    "ttl_bound": "PASS",
+    "automatic_expiry": "PASS",
+    "partial_failure_visibility": "PASS",
+    "verified_clean_recovery": "PASS",
+    "provider_unavailable": "PASS",
+    "rollback_failure": "PASS",
+    "recovery_verification_failure": "PASS",
+    "technical_preflight": "PASS",
+    "control_plane_unavailable": "PASS",
+    "restart_clean_recovery": "PASS"
   },
-  "reference_ranges": {
-    "envoy_web_api": "NOT_STARTED"
-  },
-  "claims": {
-    "production_adapter_compatibility": false,
-    "private_runtime_validation": false
+  "execution_failures": [],
+  "source": {
+    "repository": "serevy/security-twin-adapter-lab",
+    "run_id": 37790026686,
+    "head_sha": "0f075491f77a9519649f606be99a4e29762eb76a",
+    "head_branch": "main",
+    "event": "push",
+    "conclusion": "success",
+    "updated_at": "2026-10-08T14:09:08Z",
+    "evidence_kind": "workflow-job-summary",
+    "evidence_id": 113354644511
   }
 }

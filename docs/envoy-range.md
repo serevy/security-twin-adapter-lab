@@ -128,7 +128,8 @@ containment. Failure injection and state are synthetic; no attack corpus is invo
 checks. A failed run cannot be an overall PASS; tests stop on first failure, retaining
 completed checks and leaving the rest NOT_RUN. No raw request bodies, private-like
 scores, thresholds or decision traces are emitted. Results are generated and gitignored;
-`results/latest.json` (the existing portal placeholder) is intentionally unchanged.
+`results/latest.json` is the separately reviewed portal snapshot. The runtime script
+does not overwrite it; see [portal publication](portal.md) for aggregate-only updates.
 
 ## CI
 

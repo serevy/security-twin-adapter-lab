@@ -53,7 +53,7 @@ The public contract describes observable behavior and conformance expectations. 
 
 ## Status
 
-**Bootstrap / pre-v1.**
+**Pre-v1 / synthetic reference fixture.**
 
 No production adapter compatibility claim is made yet.
 
@@ -69,6 +69,15 @@ python3 scripts/run_envoy_conformance.py
 Requires Docker Compose v2 and Python 3.10+ on Linux/macOS. The command starts and
 always tears down the isolated range and writes `results/envoy-web-api.json`.
 See [topology, scenarios, public limits and manual commands](docs/envoy-range.md).
+
+## Conformance portal
+
+The [Pages portal](https://serevy.github.io/security-twin-adapter-lab/) (available after
+manual deployment) shows the latest published aggregate snapshot, scenario results,
+synthetic adapter maturity and recovery evidence with source-run provenance.
+See the [portal build and publication guide](docs/portal.md) and
+[reviewed aggregate JSON](results/latest.json). Portal-only changes use lightweight CI;
+they do not rerun the Docker range.
 
 ## PDDR
 

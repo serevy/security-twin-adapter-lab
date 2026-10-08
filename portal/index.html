@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Public, synthetic conformance evidence for bounded security adapters. Contract, scenario results and recovery verification.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; base-uri 'none'; form-action 'none'">
+  <title>Conformance · Security Twin Adapter Lab</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to conformance results</a>
+<div class="shell">
+  <header class="masthead">
+    <a class="brand" href="./" aria-label="Security Twin Adapter Lab home"><span class="mark" aria-hidden="true">ST</span><span>Security Twin<br><strong>Adapter Lab</strong></span></a>
+    <nav aria-label="Primary"><a href="$repo/blob/main/specs/adapter-contract-v1.md">Contract ↗</a><a href="$repo">Repository ↗</a></nav>
+  </header>
+  <main id="main">
+    <section class="hero" aria-labelledby="title">
+      <p class="eyebrow">PUBLIC CONFORMANCE / SYNTHETIC FIXTURES</p>
+      <h1 id="title">Bounded actions.<br>Observable recovery.</h1>
+      <p class="lede">Inspect what a public adapter can demonstrate: scoped restrictions, visible failures, and independently verified recovery.</p>
+      <p class="principle">Verify continuously. Intervene minimally. Recover deliberately.</p>
+    </section>
+    <section class="summary" aria-label="Conformance overview">
+      <div><span class="label">CONTRACT</span><strong>v1 <span class="muted">/ Draft</span></strong><small>Observable behavior · pre-v1</small></div>
+      <div><span class="label">PUBLISHED RESULT</span><strong>$aggregate</strong><small>Envoy / Web API synthetic range</small></div>
+      <div><span class="label">SCENARIOS PASSED</span><strong>$passed <span class="muted">/ $total</span></strong><small>Results tied to the source run below</small></div>
+    </section>
+    <div class="content-grid">
+      <div>
+        <section aria-labelledby="evidence-title">
+          <div class="section-heading"><span class="section-no">01</span><h2 id="evidence-title">$headline</h2></div>
+          <p>$detail</p>
+          $failure_note
+          <div class="table-wrap"><table class="checks"><caption>Envoy / Web API conformance scenarios</caption><thead><tr><th scope="col">Scenario</th><th scope="col">Result</th></tr></thead><tbody>$rows</tbody></table></div>
+          <p class="legend"><strong>PASS</strong> verified in the source run · <strong>FAIL</strong> check failed · <strong>NOT RUN</strong> no result; never treated as success.</p>
+        </section>
+        <section aria-labelledby="compatibility-title">
+          <div class="section-heading"><span class="section-no">02</span><h2 id="compatibility-title">Compatibility &amp; maturity</h2></div>
+          <div class="table-wrap"><table><caption>Scope of the compatibility claim</caption><thead><tr><th scope="col">Surface</th><th scope="col">Maturity</th><th scope="col">Claim</th></tr></thead><tbody>
+            <tr><th scope="row">Envoy / Web API</th><td>Synthetic reference fixture</td><td>$aggregate · public scenarios only</td></tr>
+            <tr><th scope="row">Production adapters</th><td>Not assessed</td><td>No compatibility claim</td></tr>
+            <tr><th scope="row">Private runtime</th><td>Outside public scope</td><td>Not validated by this lab</td></tr>
+          </tbody></table></div>
+          <p class="note">A passing fixture does not validate the entire draft contract or establish production compatibility. Capability advertisement is not policy authority.</p>
+        </section>
+      </div>
+      <aside aria-label="Evidence provenance and recovery">
+        <section class="panel" aria-labelledby="source-title"><p class="eyebrow">TRACEABLE, AGGREGATE EVIDENCE</p><h2 id="source-title">Source snapshot</h2>$provenance<a class="button" href="result.json">View aggregate JSON ↗</a><p class="note">No raw logs, request traces, private scores or internal decision state are included in this site.</p></section>
+        <section class="panel" aria-labelledby="recovery-title"><h2 id="recovery-title">Recovery &amp; rollback</h2><p>The reference fixture supports explicit, idempotent rollback and automatic expiry. Published verification:</p><ul class="recovery">$recovery</ul><p class="note">Rollback acknowledgement and verified recovery are separate. State is synthetic and in-memory; durable crash recovery is not claimed.</p></section>
+        <section class="panel boundary" aria-labelledby="boundary-title"><h2 id="boundary-title">Public by design</h2><p>Only the public contract, synthetic fixture capabilities and published aggregate evidence belong here.</p><a href="$repo/blob/main/PUBLIC_DISCLOSURE_BOUNDARY.md">Read the disclosure boundary ↗</a><a href="$repo/blob/main/docs/records/PDDR-0001-public-conformance-boundary.md">Read PDDR-0001 ↗</a></section>
+      </aside>
+    </div>
+    <section class="reproduce" aria-labelledby="reproduce-title"><div><p class="eyebrow">REPRODUCIBLE / OPEN TO INSPECTION</p><h2 id="reproduce-title">Run the same public checks.</h2><p>Docker Compose and Python · synthetic data only</p></div><a class="button" href="$repo/blob/main/docs/envoy-range.md">Local run guide ↗</a></section>
+  </main>
+  <footer><span>Security Twin Adapter Lab</span><span>Public conformance. Bounded claims.</span><a href="$repo/blob/main/README.ja.md" lang="ja">日本語ドキュメント ↗</a></footer>
+</div>
+</body>
+</html>

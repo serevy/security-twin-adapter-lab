@@ -1,0 +1,16 @@
+{
+  "schema_version": "public-conformance-status-v1",
+  "generated_by": "repository-bootstrap",
+  "status": "BOOTSTRAP",
+  "contract": {
+    "version": "adapter-contract-v1-draft",
+    "validated": false
+  },
+  "reference_ranges": {
+    "envoy_web_api": "NOT_STARTED"
+  },
+  "claims": {
+    "production_adapter_compatibility": false,
+    "private_runtime_validation": false
+  }
+}
