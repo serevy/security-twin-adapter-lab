@@ -10,14 +10,13 @@ of the newest workflow. It includes the source run, exact tested commit and UTC 
 time. A green synthetic fixture does not imply production adapter compatibility, full
 validation of the draft contract, or validation of the private runtime.
 
-The initial reviewed `results/latest.json` contains the 14 public PASS summary lines
-from main-branch Envoy Conformance run
-[37790026686](https://github.com/serevy/security-twin-adapter-lab/actions/runs/37790026686),
-job [113354644511](https://github.com/serevy/security-twin-adapter-lab/actions/runs/37790026686/job/113354644511),
-at commit `0f075491f77a9519649f606be99a4e29762eb76a`. Its provenance kind is
-`workflow-job-summary`: it is a projection of the already-public named check summaries,
-not a claim that an artifact was downloaded and inspected. No source logs are retained
-in the repository or site. Future imports use the stricter artifact path below.
+The initial reviewed `results/latest.json` projects the 14 scenario results from public
+artifact `11556585428` (`envoy-web-api-conformance`) of main-branch Envoy Conformance run
+[37790026686](https://github.com/serevy/security-twin-adapter-lab/actions/runs/37790026686)
+at commit `0f075491f77a9519649f606be99a4e29762eb76a`. The downloaded archive's SHA-256 digest
+and GitHub metadata were verified through the same `from_artifact` function used for
+future imports. The snapshot is marked `workflow-artifact`; raw archives/logs are not
+retained in the repository or site. Public job PASS summaries were also cross-checked.
 
 `results/bootstrap.json` preserves the original bootstrap record. Building it produces
 BOOTSTRAP with 0/14 and every check NOT RUN; it cannot produce compatibility or success

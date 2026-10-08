@@ -22,7 +22,7 @@ def render(snapshot):
     if src:
         run_url = f"{repo}/actions/runs/{src['run_id']}"
         commit_url = f"{repo}/commit/{src['head_sha']}"
-        kind = 'Public artifact' if src['evidence_kind'] == 'workflow-artifact' else 'Public job summary'
+        kind = 'Public artifact'
         provenance = f'''<dl class="provenance">
           <dt>Evidence source</dt><dd>{kind} · {src['evidence_id']}</dd>
           <dt>Workflow run</dt><dd><a href="{run_url}">#{src['run_id']} ↗</a></dd>

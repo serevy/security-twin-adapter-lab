@@ -66,7 +66,7 @@ def source(value):
     for key in ('run_id', 'evidence_id'):
         require(type(value[key]) is int and value[key] > 0, 'Invalid source ID')
     require(isinstance(value['head_sha'], str) and re.fullmatch('[a-f0-9]{40}', value['head_sha']), 'Invalid commit')
-    require(value['evidence_kind'] in ('workflow-artifact', 'workflow-job-summary'), 'Invalid evidence kind')
+    require(value['evidence_kind'] == 'workflow-artifact', 'Invalid evidence kind')
     stamp = value['updated_at']
     require(isinstance(stamp, str) and re.fullmatch(r'\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ', stamp), 'Invalid timestamp')
     datetime.datetime.strptime(stamp, '%Y-%m-%dT%H:%M:%SZ')
