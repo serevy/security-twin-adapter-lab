@@ -7,6 +7,7 @@ import {join, resolve} from 'node:path';
 import {once} from 'node:events';
 
 const site = resolve(process.argv[2] || '_site');
+const live = process.argv[3] === '--live';
 const output = resolve('portal-preview');
 const prefix = '/security-twin-adapter-lab/';
 const allowed = new Set(['index.html', 'ja/index.html', 'style.css', 'result.json', '.nojekyll']);
@@ -63,7 +64,21 @@ try {
   await call('Page.enable');
   await mkdir(output, {recursive: true});
   const expected = JSON.parse(await readFile(join(site, 'result.json'), 'utf8'));
-  const root = `http://127.0.0.1:${server.address().port}${prefix}`;
+  const root = live ? `https://serevy.github.io${prefix}` : `http://127.0.0.1:${server.address().port}${prefix}`;
+  if (live) {
+    // CDN propagation may lag deployment. Fail closed if exact files never arrive.
+    let matched = false;
+    for (let attempt = 0; attempt < 12; attempt++) {
+      matched = true;
+      for (const path of ['index.html', 'ja/index.html', 'style.css', 'result.json']) {
+        const response = await fetch(root + path, {cache: 'no-store', signal: AbortSignal.timeout(10000)});
+        if (!response.ok || await response.text() !== await readFile(join(site, path), 'utf8')) { matched = false; break; }
+      }
+      if (matched) break;
+      await delay(5000);
+    }
+    if (!matched) throw new Error('Live publication differs from the deployed artifact');
+  }
   for (const locale of ['en', 'ja']) {
     for (const [name, width, height] of [['desktop', 1440, 1000], ['mobile', 390, 844]]) {
       await call('Emulation.setDeviceMetricsOverride', {width, height, deviceScaleFactor: 1, mobile: false});
@@ -77,6 +92,8 @@ try {
           checks: [...document.querySelectorAll('.checks tbody .badge')].map(x => x.textContent),
           heading: document.querySelector('h1')?.textContent,
           ids: [...document.querySelectorAll('.checks tbody tr')].map(x => x.dataset.scenario),
+          provenance: [...document.querySelectorAll('.provenance dd')].map(x => x.textContent),
+          provenanceLinks: [...document.querySelectorAll('.provenance a')].map(x => x.href),
           evidence: document.querySelector('[data-evidence-link]')?.href,
           stylesheet: document.querySelector('link[rel="stylesheet"]')?.href,
           languages: [...document.querySelectorAll('.language-switch a')].map(x => [x.lang, x.href, x.textContent, x.getAttribute('aria-current')]),
@@ -90,6 +107,11 @@ try {
       if (!report?.ready || report.overflow || report.background !== 'rgb(246, 247, 243)') throw new Error(`${name}: layout or CSS failed`);
       if (JSON.stringify(report.checks) !== JSON.stringify(Object.values(expected.checks))) throw new Error(`${name}: displayed results mismatch`);
       if (JSON.stringify(report.ids) !== JSON.stringify(Object.keys(expected.checks))) throw new Error(`${locale}: scenario IDs changed`);
+      if (expected.source) {
+        const src = expected.source;
+        if (!report.provenance[0]?.endsWith(' · ' + src.evidence_id) || report.provenance[3] !== src.updated_at || report.provenance[4] !== src.conclusion ||
+            JSON.stringify(report.provenanceLinks) !== JSON.stringify([`https://github.com/serevy/security-twin-adapter-lab/actions/runs/${src.run_id}`, `https://github.com/serevy/security-twin-adapter-lab/commit/${src.head_sha}`])) throw new Error('Displayed provenance mismatch');
+      } else if (report.provenance.length) throw new Error('Bootstrap must not claim provenance');
       if (report.evidence !== root + 'result.json' || report.stylesheet !== root + 'style.css') throw new Error('Locale-specific evidence or stylesheet');
       const languageLinks = [['en', root, 'English', locale === 'en' ? 'page' : null], ['ja', root + 'ja/', '日本語', locale === 'ja' ? 'page' : null]];
       if (JSON.stringify(report.languages) !== JSON.stringify(languageLinks)) throw new Error('Language switch mismatch');
@@ -105,7 +127,7 @@ try {
       }
       const shot = await call('Page.captureScreenshot', {format: 'png', captureBeyondViewport: true});
       await writeFile(join(output, `${locale}-${name}.png`), Buffer.from(shot.data, 'base64'));
-      console.log(`PASS ${locale} ${name}: ${width}px, CSS loaded, no horizontal overflow, ${report.checks.length} matching statuses, project-subpath links`);
+      console.log(`PASS ${live ? 'live' : 'local'} ${locale} ${name}: ${width}px, CSS loaded, no horizontal overflow, ${report.checks.length} matching statuses, provenance, shared JSON, project-subpath links`);
     }
   }
 } finally {

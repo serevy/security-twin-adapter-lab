@@ -4,11 +4,13 @@ import io
 import json
 from pathlib import Path
 import tempfile
+import tarfile
 import unittest
 import zipfile
 
 from build import ROOT, PUBLIC_FILES, build, check_publication, render
 from locales import LOCALES
+from unpack_publication import unpack
 from evidence import BOOTSTRAP, REPOSITORY, SCENARIOS, from_artifact, read_json, validate
 
 
@@ -202,6 +204,38 @@ class PortalTests(unittest.TestCase):
             (output / 'ja/result.json').write_text('{}')
             with self.assertRaises(ValueError):
                 check_publication(output)
+
+
+    def test_pages_archive_roundtrip_and_rejects_unexpected_members(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            site = root / 'site'
+            build(ROOT / 'results/latest.json', site)
+            archive = root / 'artifact.tar'
+            with tarfile.open(archive, 'w') as tar:
+                tar.add(site, arcname='.')
+            unpack(archive, root / 'copy')
+            for name in PUBLIC_FILES:
+                self.assertEqual((site / name).read_bytes(), (root / 'copy' / name).read_bytes())
+            for name, kind in [('ja/result.json', tarfile.REGTYPE), ('../outside', tarfile.REGTYPE),
+                               ('index.html', tarfile.SYMTYPE), ('index.html', tarfile.LNKTYPE)]:
+                with tarfile.open(archive, 'w') as tar:
+                    entry = tarfile.TarInfo(name)
+                    entry.type = kind
+                    entry.linkname = 'outside'
+                    tar.addfile(entry, io.BytesIO())
+                with self.assertRaises(ValueError):
+                    unpack(archive, root / 'rejected')
+                self.assertFalse((root / 'rejected').exists())
+            with tarfile.open(archive, 'w') as tar:
+                tar.add(site / 'index.html', arcname='index.html')
+                tar.add(site / 'index.html', arcname='index.html')
+            with self.assertRaises(ValueError):
+                unpack(archive, root / 'duplicate')
+            with tarfile.open(archive, 'w'):
+                pass
+            with self.assertRaises(ValueError):
+                unpack(archive, root / 'missing')
 
 
 if __name__ == '__main__':

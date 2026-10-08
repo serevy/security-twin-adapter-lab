@@ -3,3 +3,14 @@
 @media(max-width:900px){.content-grid{grid-template-columns:1fr;gap:8px}.shell{padding:0 25px}.summary>div{padding:19px}.hero{padding-top:45px}aside{display:grid;grid-template-columns:1fr 1fr;gap:20px}.panel{margin:0}.boundary{grid-column:1/-1}.reproduce{margin-top:35px}}
 @media(max-width:580px){.shell{padding:0 18px}.masthead{padding:22px 0;gap:15px}.masthead nav{gap:14px;font-size:12px}.brand{font-size:12px}.mark{width:35px;height:35px}.hero{padding-top:35px}h1{letter-spacing:-1.7px}.lede{font-size:16px}.summary{grid-template-columns:1fr;margin-bottom:32px}.summary>div{grid-template-columns:1fr 1fr;align-items:center;padding:17px 19px}.summary>div+div{border-left:0;border-top:1px solid var(--line)}.summary strong{text-align:right;font-size:25px}.summary small{grid-column:1/-1}.summary .badge{font-size:18px}aside{display:block}.panel{margin-bottom:20px}.section-heading h2{font-size:19px}th,td{padding:12px 10px}.reproduce{display:block}.reproduce .button{margin-top:18px}footer{flex-wrap:wrap}.provenance dd{font-size:12px}}
 .header-links{display:grid;gap:10px;justify-items:end}.masthead .language-switch{display:flex;gap:8px;font-size:12px;white-space:nowrap}.language-switch [aria-current="page"]{font-weight:700;text-decoration:none}html[lang="ja"] body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Noto Sans CJK JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif}html[lang="ja"] h1{font-size:clamp(30px,4.2vw,54px);line-height:1.4;letter-spacing:-1px}html[lang="ja"] .eyebrow,html[lang="ja"] .label{letter-spacing:.8px}
+
+/* Quiet hierarchy: evidence first, with no extra assets or client-side code. */
+.hero{padding-top:48px;padding-bottom:28px}
+.summary{border-top:3px solid var(--teal);box-shadow:0 3px 12px #17312e06}
+.section-no{border:1px solid var(--line);border-radius:5px;padding:5px 7px}
+.checks tbody tr:hover{background:#f3f7f3}
+.checks td{text-align:right}
+.provenance{border-top:1px solid var(--line);padding-top:4px}
+.language-switch a{padding:4px 2px}
+html[lang="ja"] .lede,html[lang="ja"] .panel p{line-height:1.85;line-break:strict}
+@media(max-width:580px){.hero{padding-top:28px}.masthead{flex-wrap:wrap}.summary{margin-bottom:28px}}

@@ -2,13 +2,13 @@
 
 [English](README.md) | **日本語**
 
-> **境界付きセキュリティアダプタのための公開Conformance Lab**
+> **操作範囲を限定したセキュリティアダプタの公開適合検証環境**
 
 **継続的に確かめる。必要最小限に介入する。意図的に復旧する。**
 
 Security Twin Adapter Lab は、セキュリティアダプタの相互運用性を公開・再現可能な形で検証するためのテスト環境です。
 
-このリポジトリは、private な Enterprise Security Twin 本体の公開版・縮小コピーではありません。
+このリポジトリは、非公開の Enterprise Security Twin 本体の公開版・縮小コピーではありません。
 
 ここで公開するのは、アダプタが何を主張できるか、何を拒否すべきか、失敗をどう可視化し、どう復旧を確認するかという**公開可能な境界**です。検知回避に使える内部ロジックや意思決定実装は公開対象にしません。
 
@@ -43,19 +43,19 @@ fixture、trace、結果、実装詳細を追加する前に [PUBLIC_DISCLOSURE_
 6. scoped containment / TTL rollback / partial failure / verified recovery を検証;
 7. policy authorityをadapterへ移さず、他adapter familyへ展開。
 
-## Public contract principle
+## 公開契約の原則
 
-Adapterがadvertiseするのは**技術的に可能なcapability**であり、policy authorityではありません。
+アダプタが表明するのは**技術的に実行可能な機能**であり、ポリシー上の権限ではありません。
 
-Conformant actuator は、すでにauthorizeされた bounded request のみを受け取り、platform制約に応じてさらに狭めることはできますが、scopeやauthorityを広げることはできません。
+契約に適合するアクチュエーターは、すでに許可された範囲付きのリクエストのみを受け取ります。プラットフォームの制約に応じて範囲をさらに狭めることはできますが、範囲や権限を広げることはできません。
 
-このpublic contractは**観測可能な挙動と適合条件**を記述します。private runtime ABI、scoring logic、detection implementationの公開コピーではありません。
+この公開契約は**観測可能な挙動と適合条件**を記述します。非公開ランタイムの ABI、スコアリングロジック、検知実装の公開コピーではありません。
 
-## Status
+## 現在の状態
 
 **Pre-v1 / synthetic reference fixture.**
 
-現時点でproduction adapter compatibilityは主張しません。
+現時点では本番アダプタとの互換性を主張しません。
 
 ## PDDR
 
@@ -69,7 +69,7 @@ python .pddr/pddr.py validate
 
 ## License
 
-Licenseはpublic/commercial boundaryの確認後に選定します。
+ライセンスは公開利用と商用利用の範囲を確認した後に選定します。
 
 ## Envoy 参照環境の実行
 
@@ -80,17 +80,17 @@ python3 scripts/run_envoy_conformance.py
 ```
 
 セッション・ルート限定の制限、TTL 上限・自動期限切れ、明示的 rollback、
-部分失敗、復旧の別途検証、制御用コンテナ停止を合成データで検証します。
+部分失敗、操作とは別の復旧確認、制御用コンテナの停止を合成データで検証します。
 終了時は環境を片付け、`results/envoy-web-api.json` に公開適合結果を出力します。
 [構成・検証項目・公開範囲・手動手順](docs/envoy-range.md) を参照してください。
-private 実装・判定ロジックを再現するものではありません。
+非公開の実装・判定ロジックを再現するものではありません。
 
 ## 公開 conformance ポータル
 
 [GitHub Pages 日本語版](https://serevy.github.io/security-twin-adapter-lab/ja/) は初回の手動デプロイ後に公開されます。
 公開済み集約結果・シナリオ別 PASS/FAIL/NOT RUN・rollback／復旧の検証結果を、
 出典 run と対象 commit 付きで表示します。最新の公開スナップショットであり、
-本番互換性や private 実装の検証を示すものではありません。
+本番環境との互換性や非公開実装の検証を示すものではありません。
 [ビルド・公開・結果更新手順](docs/portal.md) を参照してください。
 
 ## 公開コンテンツの言語と検証結果の実務ルール
