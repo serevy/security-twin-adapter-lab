@@ -217,6 +217,20 @@ class PortalTests(unittest.TestCase):
             unpack(archive, root / 'copy')
             for name in PUBLIC_FILES:
                 self.assertEqual((site / name).read_bytes(), (root / 'copy' / name).read_bytes())
+            # GitHub's pinned upload-pages-artifact excludes dotfiles.
+            with tarfile.open(archive, 'w') as tar:
+                for name in PUBLIC_FILES - {'.nojekyll'}:
+                    tar.add(site / name, arcname=name)
+            unpack(archive, root / 'pages-copy')
+            for name in PUBLIC_FILES:
+                self.assertEqual((site / name).read_bytes(), (root / 'pages-copy' / name).read_bytes())
+            for missing in PUBLIC_FILES - {'.nojekyll'}:
+                with tarfile.open(archive, 'w') as tar:
+                    for name in PUBLIC_FILES - {'.nojekyll', missing}:
+                        tar.add(site / name, arcname=name)
+                with self.assertRaises(ValueError):
+                    unpack(archive, root / 'incomplete')
+                self.assertFalse((root / 'incomplete').exists())
             for name, kind in [('ja/result.json', tarfile.REGTYPE), ('../outside', tarfile.REGTYPE),
                                ('index.html', tarfile.SYMTYPE), ('index.html', tarfile.LNKTYPE)]:
                 with tarfile.open(archive, 'w') as tar:

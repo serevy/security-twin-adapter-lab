@@ -46,6 +46,9 @@ with `English | 日本語` switches on both pages. Both are rendered from the sa
 snapshot and link to the single root `result.json` (`../result.json` from Japanese).
 Only presentation strings are translated; scenario IDs, status values, versions, commit
 SHAs and provenance/digests remain language-neutral. There is no locale-specific JSON.
+GitHub's pinned Pages upload action omits dotfiles, so the deployed archive contains
+the four served files; `.nojekyll` is only a local build marker. Live verification
+permits only this marker to be absent and still requires every served file exactly.
 See [PDDR-0002](records/PDDR-0002-public-localization-and-language-neutral-evidence.md)
 and the explicit README contributor rule.
 It never copies the repository, documentation tree, Docker source, logs, ZIP files or
