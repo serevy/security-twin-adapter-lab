@@ -57,6 +57,19 @@ The public contract describes observable behavior and conformance expectations. 
 
 No production adapter compatibility claim is made yet.
 
+## Run the Envoy reference range
+
+A synthetic Docker Compose fixture covers scoped session restriction, bounded TTL,
+explicit rollback, partial failure and separately verified recovery through real Envoy.
+
+```bash
+python3 scripts/run_envoy_conformance.py
+```
+
+Requires Docker Compose v2 and Python 3.10+ on Linux/macOS. The command starts and
+always tears down the isolated range and writes `results/envoy-web-api.json`.
+See [topology, scenarios, public limits and manual commands](docs/envoy-range.md).
+
 ## PDDR
 
 Durable public-surface decisions are recorded under [docs/records](docs/records/) using [PDDR Kit](https://github.com/serevy/pddr-kit).
