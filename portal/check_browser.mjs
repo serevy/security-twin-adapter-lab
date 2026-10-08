@@ -23,8 +23,11 @@ const server = createServer(async (req, res) => {
 server.listen(0, '127.0.0.1');
 await once(server, 'listening');
 const profile = await mkdtemp(join(tmpdir(), 'portal-chrome-'));
-const chrome = spawn(process.env.CHROME || 'google-chrome', ['--headless', '--no-sandbox', '--disable-gpu',
-  '--remote-debugging-port=0', `--user-data-dir=${profile}`, 'about:blank'], {stdio: 'ignore'});
+const chrome = spawn(process.env.CHROME || 'google-chrome', ['--headless=new', '--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage',
+  '--no-first-run', '--no-default-browser-check',
+  '--remote-debugging-port=0', `--user-data-dir=${profile}`, 'about:blank'], {stdio: ['ignore', 'ignore', 'pipe']});
+let chromeDiagnostic = '';
+chrome.stderr.on('data', data => { chromeDiagnostic = (chromeDiagnostic + data.toString()).slice(-4000); });
 const closed = new Promise(resolve => chrome.once('close', resolve));
 let launchError;
 chrome.on('error', error => { launchError = error; });
@@ -34,10 +37,11 @@ try {
   let port;
   for (let i = 0; i < 100; i++) {
     if (launchError) throw launchError;
+    if (chrome.exitCode !== null) throw new Error(`Chrome exited (${chrome.exitCode}): ${chromeDiagnostic}`);
     try { port = Number((await readFile(join(profile, 'DevToolsActivePort'), 'utf8')).split('\n')[0]); break; }
     catch { await delay(100); }
   }
-  if (!port) throw new Error('Chrome readiness timeout');
+  if (!port) throw new Error(`Chrome readiness timeout: ${chromeDiagnostic}`);
   const targets = await (await fetch(`http://127.0.0.1:${port}/json/list`)).json();
   socket = new WebSocket(targets.find(t => t.type === 'page').webSocketDebuggerUrl);
   await new Promise((resolve, reject) => { socket.onopen = resolve; socket.onerror = reject; });
