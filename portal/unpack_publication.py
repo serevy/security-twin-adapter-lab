@@ -18,6 +18,10 @@ def unpack(archive, output):
             if not member.isfile() or name not in PUBLIC_FILES or name in files or member.size > 1_000_000:
                 raise ValueError('Unexpected publication archive member')
             files[name] = tar.extractfile(member).read()
+    # upload-pages-artifact excludes dotfiles. This empty build marker is not
+    # served content; restore it only for the local publication validator.
+    if set(files) == PUBLIC_FILES - {'.nojekyll'}:
+        files['.nojekyll'] = b''
     if set(files) != PUBLIC_FILES:
         raise ValueError('Incomplete publication archive')
     # Never extract archive paths or links; write only validated filenames.
