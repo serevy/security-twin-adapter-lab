@@ -69,7 +69,7 @@ jobs:
           check_publication(Path('_site'))
           PY
       - name: Ensure Japanese glyphs are available for browser checks
-        timeout-minutes: 2
+        timeout-minutes: 3
         run: bash portal/ensure_browser_fonts.sh
       - name: Browser check for English and Japanese at desktop and mobile widths
         run: node portal/check_browser.mjs _site
@@ -117,7 +117,7 @@ jobs:
           gh run download "$GITHUB_RUN_ID" --name github-pages --dir "$RUNNER_TEMP/pages-artifact"
           python3 portal/unpack_publication.py "$RUNNER_TEMP/pages-artifact/artifact.tar" _site
       - name: Ensure Japanese glyphs are available for live browser checks
-        timeout-minutes: 2
+        timeout-minutes: 3
         run: bash portal/ensure_browser_fonts.sh
       - name: Verify live English and Japanese at desktop and mobile widths
         run: node portal/check_browser.mjs _site --live
