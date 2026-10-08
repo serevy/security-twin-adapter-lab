@@ -1,0 +1,59 @@
+x-hardened: &hardened
+  read_only: true
+  cap_drop: [ALL]
+  security_opt: [no-new-privileges:true]
+  pids_limit: 64
+  mem_limit: 128m
+  networks: [fixture]
+
+x-python: &python
+  <<: *hardened
+  build: .
+  image: security-twin-synthetic:issue-5
+  healthcheck:
+    test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=2)"]
+    interval: 2s
+    timeout: 3s
+    retries: 20
+
+services:
+  adapter:
+    <<: *python
+  normal-api:
+    <<: *python
+    environment:
+      SERVICE: normal-api
+    command: [python, /app/api/server.py]
+  sensitive-api:
+    <<: *python
+    environment:
+      SERVICE: sensitive-api
+    command: [python, /app/api/server.py]
+  envoy:
+    <<: *hardened
+    image: envoyproxy/envoy:v1.35.0
+    user: "10001:10001"
+    mem_limit: 256m
+    command: [envoy, -c, /etc/envoy/envoy.yaml, --concurrency, "1", --log-level, warn]
+    volumes:
+      - ./envoy.yaml:/etc/envoy/envoy.yaml:ro
+    depends_on:
+      adapter: {condition: service_healthy}
+      normal-api: {condition: service_healthy}
+      sensitive-api: {condition: service_healthy}
+  runner:
+    <<: *hardened
+    image: python:3.12.11-slim-bookworm
+    user: "${LOCAL_UID:-1000}:${LOCAL_GID:-1000}"
+    profiles: [test]
+    working_dir: /work
+    environment:
+      PYTHONDONTWRITEBYTECODE: "1"
+    volumes:
+      - ../../tests:/work/tests:ro
+      - ../../results:/work/results
+    entrypoint: [python, tests/conformance.py]
+
+networks:
+  fixture:
+    internal: true

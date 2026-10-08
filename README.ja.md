@@ -70,3 +70,17 @@ python .pddr/pddr.py validate
 ## License
 
 Licenseはpublic/commercial boundaryの確認後に選定します。
+
+## Envoy 参照環境の実行
+
+Linux/macOS の Docker Compose v2 と Python 3.10+ で実行できます。
+
+```bash
+python3 scripts/run_envoy_conformance.py
+```
+
+セッション・ルート限定の制限、TTL 上限・自動期限切れ、明示的 rollback、
+部分失敗、復旧の別途検証、制御用コンテナ停止を合成データで検証します。
+終了時は環境を片付け、`results/envoy-web-api.json` に公開適合結果を出力します。
+[構成・検証項目・公開範囲・手動手順](docs/envoy-range.md) を参照してください。
+private 実装・判定ロジックを再現するものではありません。
