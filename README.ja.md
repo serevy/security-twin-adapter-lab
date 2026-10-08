@@ -53,7 +53,7 @@ Conformant actuator は、すでにauthorizeされた bounded request のみを�
 
 ## Status
 
-**Bootstrap / pre-v1.**
+**Pre-v1 / synthetic reference fixture.**
 
 現時点でproduction adapter compatibilityは主張しません。
 
