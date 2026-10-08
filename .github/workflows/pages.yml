@@ -69,11 +69,8 @@ jobs:
           check_publication(Path('_site'))
           PY
       - name: Ensure Japanese glyphs are available for browser checks
-        run: |
-          if [ -z "$(fc-list :lang=ja)" ]; then
-            sudo apt-get update -qq
-            sudo apt-get install -y --no-install-recommends fonts-noto-cjk
-          fi
+        timeout-minutes: 2
+        run: bash portal/ensure_browser_fonts.sh
       - name: Browser check for English and Japanese at desktop and mobile widths
         run: node portal/check_browser.mjs _site
       - name: Upload PR preview (no deployment permissions)
@@ -98,6 +95,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
+      contents: read
+      actions: read
       pages: write
       id-token: write
     environment:
@@ -108,3 +107,17 @@ jobs:
       - name: Deploy verified static artifact
         id: deployment
         uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Retrieve the exact published artifact for live comparison
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh run download "$GITHUB_RUN_ID" --name github-pages --dir "$RUNNER_TEMP/pages-artifact"
+          python3 portal/unpack_publication.py "$RUNNER_TEMP/pages-artifact/artifact.tar" _site
+      - name: Ensure Japanese glyphs are available for live browser checks
+        timeout-minutes: 2
+        run: bash portal/ensure_browser_fonts.sh
+      - name: Verify live English and Japanese at desktop and mobile widths
+        run: node portal/check_browser.mjs _site --live

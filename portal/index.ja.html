@@ -20,12 +20,12 @@
       <p class="eyebrow">公開適合検証 / 合成テスト環境</p>
       <h1 id="title">操作の範囲を限定。<br>復旧を確かめる。</h1>
       <p class="lede">公開アダプターで実証できることを確認します。対象を限定した制限、失敗の可視化、そして操作とは独立した復旧確認です。</p>
-      <p class="principle">継続的に検証し、介入は最小限に。復旧は確実な手順で。</p>
+      <p class="principle">継続的に検証し、介入を最小限に抑えます。復旧は確実な手順で行います。</p>
     </section>
     <section class="summary" aria-label="適合検証の概要">
       <div><span class="label">契約</span><strong>v1 <span class="muted">/ 草案</span></strong><small>外部から確認できる動作 · pre-v1</small></div>
       <div><span class="label">公開済みの結果</span><strong>$aggregate</strong><small>Envoy / Web API 合成テスト環境</small></div>
-      <div><span class="label">合格したシナリオ</span><strong>$passed <span class="muted">/ $total</span></strong><small>下記の出典となる実行に対応した結果</small></div>
+      <div><span class="label">合格したシナリオ</span><strong>$passed <span class="muted">/ $total</span></strong><small>下記の出典に記載された実行の結果</small></div>
     </section>
     <div class="content-grid">
       <div>
@@ -48,7 +48,7 @@
       </div>
       <aside aria-label="検証結果の出典と復旧">
         <section class="panel" aria-labelledby="source-title"><p class="eyebrow">出典を確認できる集約結果</p><h2 id="source-title">出典スナップショット</h2>$provenance<a class="button" data-evidence-link href="${base}result.json">共通の集約 JSON を見る ↗</a><p class="note">このサイトには生ログ、リクエストのトレース、非公開のスコア、内部の判断状態を含めていません。</p></section>
-        <section class="panel" aria-labelledby="recovery-title"><h2 id="recovery-title">復旧とロールバック</h2><p>参照環境は、繰り返しても同じ状態に戻せる明示的なロールバックと、有効期限による自動解除に対応しています。公開済みの検証結果：</p><ul class="recovery">$recovery</ul><p class="note">ロールバックの受付成功と復旧の確認は別です。状態は合成データとしてメモリ内に保持され、クラッシュ後も状態を永続的に復元できることを示すものではありません。</p></section>
+        <section class="panel" aria-labelledby="recovery-title"><h2 id="recovery-title">復旧とロールバック</h2><p>参照環境は、繰り返しても同じ状態に戻せる明示的なロールバックと、有効期限による自動解除に対応しています。以下は公開済みの検証結果です。</p><ul class="recovery">$recovery</ul><p class="note">ロールバックの受付成功と復旧の確認は別です。状態は合成データとしてメモリ内に保持され、クラッシュ後も状態を永続的に復元できることを示すものではありません。</p></section>
         <section class="panel boundary" aria-labelledby="boundary-title"><h2 id="boundary-title">公開範囲を守る設計</h2><p>ここで扱うのは、公開契約、合成テスト環境の能力、公開済みの集約された検証結果のみです。</p><a href="$repo/blob/main/PUBLIC_DISCLOSURE_BOUNDARY.md">公開範囲の取り決めを読む ↗</a><a href="$repo/blob/main/docs/records/PDDR-0001-public-conformance-boundary.md">PDDR-0001 を読む ↗</a></section>
       </aside>
     </div>

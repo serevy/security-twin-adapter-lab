@@ -75,9 +75,10 @@ manual dispatch on `main` reaches the deployment job. No deployment is claimed u
 that job succeeds. This keeps the initial manual-deployment gate from Issue #3 explicit.
 
 The build job has only `contents: read` and `actions: read`. The separate deploy job has
-only `pages: write` and `id-token: write`. The workflow uses GitHub's built-in token/OIDC,
+`pages: write` and `id-token: write`, plus `contents: read` and `actions: read` to compare
+the live site with the exact published artifact. The workflow uses GitHub's built-in token/OIDC,
 no repository or environment secret, and pinned actions. It has no workflow-run trigger,
-private checkout, package install or Docker invocation.
+private checkout or Docker invocation. Runner-only Japanese font setup is described below.
 
 ## Update from an already-public artifact
 
@@ -125,3 +126,21 @@ and relative links at the project subpath; screenshots are in the PR preview art
 only, not in the Pages publication. This smoke test uses Node built-ins and installs no browser or npm package. CI installs
 Japanese system fonts only if the runner lacks them, so Japanese screenshots can be
 reviewed; those fonts are not site assets or part of the publication allowlist.
+
+## Pre-publication review and live verification
+
+The Japanese presentation was reviewed with yomiyasu v1.1.0 at upstream commit
+`c2ffae670994fec96daef92e0bc219f5c1923113`, including its lint and diff checks. Review
+preserves technical terminology, conditions, negations and scope; lint suggestions are
+not automatic rewrites. No yomiyasu dependency is added to the site or CI.
+
+The runner uses the smaller `fonts-ipafont-gothic` package if Japanese glyphs are absent,
+with a bounded installation time and an explicit font-availability check. This addresses
+the font download timeout in manual run `37803883439` without skipping browser checks.
+
+After deployment, the workflow reads back its own Pages artifact through the same
+five-file allowlist (rejecting extra paths, duplicates and links). Live HTML, CSS and JSON
+must match that artifact byte-for-byte. Chrome then checks English/Japanese at desktop
+and mobile widths, including statuses, scenario IDs, provenance, language switches,
+shared evidence, local links and overflow. No live success is claimed if this step fails.
+These checks do not execute Envoy or change the reviewed conformance snapshot.
