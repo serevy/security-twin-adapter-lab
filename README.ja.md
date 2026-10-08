@@ -53,7 +53,7 @@ Conformant actuator は、すでにauthorizeされた bounded request のみを�
 
 ## Status
 
-**Bootstrap / pre-v1.**
+**Pre-v1 / synthetic reference fixture.**
 
 現時点でproduction adapter compatibilityは主張しません。
 
@@ -84,3 +84,22 @@ python3 scripts/run_envoy_conformance.py
 終了時は環境を片付け、`results/envoy-web-api.json` に公開適合結果を出力します。
 [構成・検証項目・公開範囲・手動手順](docs/envoy-range.md) を参照してください。
 private 実装・判定ロジックを再現するものではありません。
+
+## 公開 conformance ポータル
+
+[GitHub Pages 日本語版](https://serevy.github.io/security-twin-adapter-lab/ja/) は初回の手動デプロイ後に公開されます。
+公開済み集約結果・シナリオ別 PASS/FAIL/NOT RUN・rollback／復旧の検証結果を、
+出典 run と対象 commit 付きで表示します。最新の公開スナップショットであり、
+本番互換性や private 実装の検証を示すものではありません。
+[ビルド・公開・結果更新手順](docs/portal.md) を参照してください。
+
+## 公開コンテンツの言語と検証結果の実務ルール
+
+人間向けの公開コンテンツは英語を主、日本語を維持対象の副言語とし、実用的な範囲で両方を更新します。
+翻訳は表示層に限定し、機械可読な検証結果、識別子、契約・スキーマのバージョン、出典情報は
+言語非依存に保ちます。言語別の結果 JSON を作ったり、公開範囲を広げたりしないでください。
+Pages は `/` が英語、`/ja/` が日本語で、同じ `result.json` を参照します。
+ポータルの説明を変更するときは両言語の表示と検証を更新してください。
+
+[PDDR-0002](docs/records/PDDR-0002-public-localization-and-language-neutral-evidence.md) は
+判断の理由と範囲を記録します。PDDR を無条件の Policy と解釈せず、この実務ルールを明示的に適用します。

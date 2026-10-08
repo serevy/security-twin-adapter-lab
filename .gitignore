@@ -2,3 +2,7 @@ __pycache__/
 *.pyc
 results/envoy-web-api.json
 results/envoy-compose.log
+
+_site/
+results/selected.json
+portal-preview/
