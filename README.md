@@ -1,5 +1,7 @@
 # Security Twin Adapter Lab
 
+[English] | [日本語](README.ja.md)
+
 > **Public conformance lab for bounded security adapters, failure handling, and recovery.**
 
 **Verify continuously. Intervene minimally. Recover deliberately.**
@@ -8,7 +10,7 @@ Security Twin Adapter Lab is a public, reproducible test surface for security-ad
 
 It is intentionally **not** a public mirror of the private Enterprise Security Twin implementation.
 
-The lab focuses on what an adapter may claim, what it must refuse, how failures become visible, and how recovery is demonstrated without publishing detection/evasion-sensitive internals.
+The lab focuses on what an adapter may claim, what it must refuse, how failures become visible, and how recovery is demonstrated without publishing detection- or evasion-sensitive internals.
 
 ## What belongs here
 
